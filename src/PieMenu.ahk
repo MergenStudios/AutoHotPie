@@ -7,6 +7,7 @@ ListLines Off
 SetWinDelay, 0		; Changed to 0 upon recommendation of documentation
 SetControlDelay, 0	; Changed to 0 upon recommendation of documentation
 
+; Includes
 #Include %A_ScriptDir%\lib\Gdip_All.ahk
 #Include %A_ScriptDir%\lib\GdipHelper.ahk
 #Include %A_ScriptDir%\lib\BGFunks.ahk
@@ -14,14 +15,14 @@ SetControlDelay, 0	; Changed to 0 upon recommendation of documentation
 #Include %A_ScriptDir%\lib\Json.ahk
 
 
-;Set Per monitor DPI awareness: https://www.autohotkey.com/boards/viewtopic.php?p=295182#p295182
+; Set Per monitor DPI awareness: https://www.autohotkey.com/boards/viewtopic.php?p=295182#p295182
 DllCall("User32\SetProcessDpiAwarenessContext", "UInt", -3)
 
 CoordMode, Mouse, Screen
-SetTitleMatchMode, RegEx ;May not need this anymore
+SetTitleMatchMode, RegEx ; May not need this anymore
 
 
-;Check AHK version and if AHK is installed.  Prompt install or update.
+; Check AHK version and if AHK is installed.  Prompt install or update.
 if (!A_IsCompiled)
 	checkAHK()
 
@@ -29,28 +30,28 @@ global DebugMode := false
 ; DebugMode := true
 global RemapLButton := ""
 
-;Read Json Settings file to object from AppData\Local\AutoHotPie
+; Read Json Settings file to object from AppData\Local\AutoHotPie
 
 global UserDataFolder, Settings
 global IsStandAlone := false
-loadSettingsFile() ;loads JSON to Settings global variable
+loadSettingsFile() ; loads JSON to Settings global variable
 
-;Initialize Variables and GDI+ Screen bitmap
-;Tariq Porter, you will forever have a special place in my heart.
+; Initialize Variables and GDI+ Screen bitmap
+; Tariq Porter, you will forever have a special place in my heart.
 	
 global Mon := {left: 0,	right: 0, top: 0,bottom: 0, pieDPIScale: 1} 
 global G ; For GDIP
-global pGraphics, hbm, hdc, obm, hwnd ;For Gdip+ stuff, may not be needed.
+global pGraphics, hbm, hdc, obm, hwnd ; For Gdip+ stuff, may not be needed.
 global BitmapPadding
 
 
-global PieOpenLocX	;X Position of where pie menu is opened
-global PieOpenLocY	;Y ^
-global SubPieLocX	;X Position of where pie menu is opened
-global SubPieLocY	;Y ^
+global PieOpenLocX	; X Position of where pie menu is opened
+global PieOpenLocY	; Y ^
+global SubPieLocX	; X Position of where pie menu is opened
+global SubPieLocY	; Y ^
 global ActivePieHotkey
 global ActivePieNumber
-global ActivePieSliceHotkeyArray := [] ;loadSliceHotkeys()	
+global ActivePieSliceHotkeyArray := [] ; loadSliceHotkeys()	
 global PressedSliceHotkeyName := ""
 global PressedPieKeyAgain := false
 global ActiveProfile
@@ -67,15 +68,15 @@ global ExitKey
 ExitKey.pressed := false
 
 
-;Init G Text
-SetUpGDIP(0, 0, 50, 50) ;windows were appearing over taskbar without -0.01
+; Init G Text
+SetUpGDIP(0, 0, 50, 50) ; windows were appearing over taskbar without -0.01
 StartDrawGDIP()
 Gdip_TextToGraphics(G, "Test", "x20 y20 Center vCenter c00FFFFFF r4 s20", "Arial")
-Gdip_SetCompositingMode(G, 1) ;idk if this matters but it looked p nice for images
+Gdip_SetCompositingMode(G, 1) ; idk if this matters but it looked p nice for images
 ClearDrawGDIP()
 EndDrawGDIP()
 
-;Set up icon menu tray options
+; Set up icon menu tray options
 if (A_IsCompiled){
 	if (!IsStandAlone){
 		Menu, Tray, Add , AutoHotPie Settings, openSettings
@@ -94,16 +95,16 @@ if (!IsStandAlone){
 	Menu, Tray, Default , AutoHotPie Settings
 }
 loadPieMenus()
-return ;End Initialization
+return ; End Initialization
 
-pieLabel: ;Fixed hotkey overlap "r and ^r", refactor this
+pieLabel: ; Fixed hotkey overlap "r and ^r", refactor this
 	; Issue with MOI3d, pie menus don't want to show in that application specifically, so this display refresh thing sometimes works.
 	; SetUpGDIP(monLeft, monTop, monRight-monLeft, monBottom-monTop, "Hide")
 	; SetUpGDIP(monLeft, monTop, monRight-monLeft, monBottom-monTop, "Show")		
-	;Re-initialize variables
+	; Re-initialize variables
 	if (PieLaunchedState == true){
-		PressedSliceHotkeyName := A_ThisHotkey ;This line made me feel things again :)
-		;Handle same piekey pressed again?				
+		PressedSliceHotkeyName := A_ThisHotkey ; This line made me feel things again :)
+		; Handle same piekey pressed again?				
 		return
 	}		
 	else
@@ -121,12 +122,12 @@ pieLabel: ;Fixed hotkey overlap "r and ^r", refactor this
 		ActiveProfile := Settings.appProfiles[1]
 		Hotkey, IfWinNotActive, ahk_group regApps		
 		}
-	else ;Registered applications
+	else ; Registered applications
 		{			
-		;Get application and key
+		; Get application and key
 		; WinGet, activeWinProc, ProcessName, A	
 		activeWinProc := getActiveProfileString()
-		;lookup profile and key index
+		; lookup profile and key index
 		for profileIndex, profile in Settings.appProfiles
 			{
 			if profileIndex == 1
@@ -134,9 +135,9 @@ pieLabel: ;Fixed hotkey overlap "r and ^r", refactor this
 			; if ahk_group regApps not contains activeWindow
 			for ahkHandleIndex, ahkHandle in profile.ahkHandles
 			{				
-				testAHKHandle := StrSplit(ahkHandle, " ", ,2)[2] ;Will test multiple program, may be broken
+				testAHKHandle := StrSplit(ahkHandle, " ", ,2)[2] ; Will test multiple program, may be broken
 				; msgbox, % testAHKHandle . " " activeWinProc
-				if (testAHKHandle == activeWinProc) ;Is this the right profile?
+				if (testAHKHandle == activeWinProc) ; Is this the right profile?
 					{	
 						; msgbox, what					
 						ActiveProfile := profile						
@@ -148,7 +149,7 @@ pieLabel: ;Fixed hotkey overlap "r and ^r", refactor this
 			}			
 		}	
 	
-	;Push hotkey to hotkeyArray to be blocked when pie menus are running.
+	; Push hotkey to hotkeyArray to be blocked when pie menus are running.
 	for k, pieKey in ActiveProfile.pieKeys
 	{		
 		hotKeyArray.Push(pieKey.hotkey)		
@@ -182,7 +183,7 @@ pieLabel: ;Fixed hotkey overlap "r and ^r", refactor this
 			PieLaunchedState := false
 			
 			blockBareKeys(ActivePieHotkey, hotKeyArray, false)
-				;deactivate dummy keys
+				; deactivate dummy keys
 			ActivePieHotkey := ""
 			; msgbox, % funcAddress.label			
 			runPieFunction(funcAddress)			
@@ -220,8 +221,8 @@ return
 }
 
 
-;I hate you so much... windows ink.
-;220705 - windows ink still makes me sad.
+; I hate you so much... windows ink.
+; 220705 - windows ink still makes me sad.
 
 #IfWinActive, ahk_exe AutoHotPie.exe
 ~LButton up::
@@ -261,20 +262,20 @@ return
 LButton::
 	LMB.pressed := true
 	; PenClicked := true 
-	;Check pie launched state again?
+	; Check pie launched state again?
 	Return
 LButton up::	
 	LMB.pressed := false
 	; PenClicked := false
-	;Check pie launched state again?
+	; Check pie launched state again?
 	Return
 
-;For mouseClick function
+; For mouseClick function
 #If (RemapLButton == "right")
 LButton::RButton
 #If (RemapLButton == "middle")
 LButton::MButton
-#If ;This ends the context-sensitivity
+#If ; This ends the context-sensitivity
 
 SliceHotkeyPress:
 	SliceHotkey.pressed := true
@@ -295,7 +296,7 @@ if (settings.global.enableEscapeKeyMenuCancel)
 	PieLaunchedState := false
 return
 
-;If a display is connected or disconnected
+; If a display is connected or disconnected
 OnMessage(0x7E, "WM_DISPLAYCHANGE")
 return
 WM_DISPLAYCHANGE(wParam, lParam)

@@ -1,7 +1,7 @@
-﻿;To set the function to call from the JSON settings file, type in the
-;part of the function after "pie_"
+﻿; To set the function to call from the JSON settings file, type in the
+; part of the function after "pie_"
 
-;Special function allowing submenus
+; Special function allowing submenus
 pie_submenu(pieMenuAddress)
 {
 	return
@@ -67,7 +67,7 @@ pie_sendKey(keyObject)
 pie_mouseClick(params)
 	{
 		; MouseButton - str, Shift - bool, Ctrl - bool, Alt - bool, Drag - bool
-		;["LButton",1,0,0,0,0]
+		; ["LButton",1,0,0,0,0]
 		RemapLButton := params.button
 		modsDown := ""
 		modsUp := ""
@@ -132,16 +132,16 @@ pie_eyedropper(mode)
 	}
 pie_multiClipboard()
 	{
-	;Windows already has this so who cares
+	; Windows already has this so who cares
 	return
 	}
-pie_repeatLastFunction(timeOut) ;special function
+pie_repeatLastFunction(timeOut) ; special function
 	{
 	return
 	}
 pie_openSettings()
 	{
-	;Different location for compiled version
+	; Different location for compiled version
 	if (IsStandAlone){
 		msgbox, "Cannot open AutoHotPie settings from standalone"
 		return false
@@ -158,28 +158,28 @@ pie_openSettings()
 	}
 	
 	}
-pie_resizeWindow() ;make this work thorugh here
+pie_resizeWindow() ; make this work thorugh here
 	{
 	; msgbox, % PieMenuPosition[1]
 	xPos := PieOpenLocX
 	yPos := PieOpenLocY
 	WinGetPos, winX, winY, width, height, A
-	if (xPos < winX){ ;to left of origin
-		if (yPos > winY){ ;below origin
+	if (xPos < winX){ ; to left of origin
+		if (yPos > winY){ ; below origin
 			WinMove, A,,xPos,, width+(winX-xPos), (yPos-winY)
-		}else{ ;above origin
+		}else{ ; above origin
 			WinMove, A,, xPos, yPos, width+(winX-xPos), height+(winY-yPos)		
 		}	
-	}else{ ;right of origin
-		if (yPos > winY){ ;mouse below origin
+	}else{ ; right of origin
+		if (yPos > winY){ ; mouse below origin
 			WinMove, A,,,, (xPos-winX), (yPos-winY)
-		} else { ;mouse above origin
+		} else { ; mouse above origin
 			WinMove, A,,,yPos, (xPos-winX), height+(winY-yPos)
 		}	
 	}
 	Return
 	}
-pie_moveWindow() ;make this work thorugh here
+pie_moveWindow() ; make this work thorugh here
 	{
 	WinGetPos, winX, winY, width, height, A
 	WinMove, A, , PieOpenLocX-(width/2), PieOpenLocY-(width/3)
@@ -244,7 +244,7 @@ pie_afterfx_runPieScript()
 	}
 
 
-pie_Photoshop_cycleTool(cycleTools) ;cycle through array of tools.  The array can have only one value as well.
+pie_Photoshop_cycleTool(cycleTools) ; cycle through array of tools.  The array can have only one value as well.
 	{
 	; photoshopTools := ["moveTool","artboardTool","marqueeRectTool","marqueeEllipTool","marqueeSingleRowTool","marqueeSingleColumnTool","lassoTool","polySelTool","magneticLassoTool","quickSelectTool","magicWandTool","cropTool","perspectiveCropTool","sliceTool","sliceSelectTool","framedGroupTool","eyedropperTool","3DMaterialSelectTool","colorSamplerTool","rulerTool","textAnnotTool","countTool","spotHealingBrushTool","magicStampTool","patchSelection","recomposeSelection","redEyeTool","paintbrushTool","pencilTool","colorReplacementBrushTool","wetBrushTool","cloneStampTool","patternStampTool","historyBrushTool","artBrushTool","eraserTool","backgroundEraserTool","magicEraserTool","gradientTool","bucketTool","3DMaterialDropTool","blurTool","sharpenTool","smudgeTool","dodgeTool","burnInTool","saturationTool","penTool","freeformPenTool","curvaturePenTool","addKnotTool","deleteKnotTool","convertKnotTool","typeCreateOrEditTool","typeVerticalCreateOrEditTool","typeVerticalCreateMaskTool","typeCreateMaskTool","pathComponentSelectTool","directSelectTool","rectangleTool","roundedRectangleTool","ellipseTool","polygonTool","lineTool","customShapeTool","handTool","rotateTool","zoomTool"]			
 	appRef := ComObjActive( "Photoshop.Application" )

@@ -1,4 +1,5 @@
-﻿removeCharacters(var, chars="+^!#")
+﻿; util
+removeCharacters(var, chars="+^!#")
 	{
 	   stringreplace,var,var,%A_space%,_,a
 	   loop, parse, chars,
@@ -6,6 +7,7 @@
 	   return var
 	}
 
+; util
 calcAngle(aX, aY, bX, bY)
 	{
 	initVal := (dllcall("msvcrt\atan2","Double",(bY-aY), "Double",(bX-aX), "CDECL Double")*57.29578)
@@ -16,6 +18,7 @@ calcAngle(aX, aY, bX, bY)
 	return returnVal
 	}
 
+; util
 checkAHK()
 	{
 	AHKVersion := StrReplace(A_AHKVersion, ".","")
@@ -43,7 +46,7 @@ checkAHK()
 loadSettingsFile(){
 	FileEncoding, UTF-8
 	Try{
-		;Try loading from local directory
+		; Try loading from local directory
 			UserDataFolder := A_ScriptDir . "\"			
 			loopFileFound := false
 			Loop, Files, %A_ScriptDir%\*.json, F
@@ -61,7 +64,7 @@ loadSettingsFile(){
 				IsStandalone := true
 				return
 			} else {
-				;Try opening from User AppData folder
+				; Try opening from User AppData folder
 				settingsFileName := "AHPSettings.json"
 				UserDataFolder := A_AppData . "\AutoHotPie"
 				settingsFilePath := UserDataFolder . "\" . settingsFileName	
@@ -69,7 +72,7 @@ loadSettingsFile(){
 					FileRead, Settings, %settingsFilePath%					
 					Settings := Json.Load(Settings)							
 				} else {
-					;Try to open AHP Settings
+					; Try to open AHP Settings
 					AHPSettingsOpened := pie_openSettings()
 					if (AHPSettingsOpened == false){
 						Msgbox, % "No valid settings file found.`n`nPlace a valid settings file here and relaunch to load manually:`n" . UserDataFolder . "`n`nFolder will be opened when this message box is closed."
@@ -79,7 +82,7 @@ loadSettingsFile(){
 				}				
 			}
 		SetWorkingDir, %UserDataFolder%		
-		;Try loading from AppData Folder
+		; Try loading from AppData Folder
 		
 	} catch e {
 		msgbox, % "Settings file is invalid JSON.`n`nNo Pie Menus for you :(`n`nFix settings file at:`n" . settingsFilePath
@@ -89,7 +92,7 @@ loadSettingsFile(){
 }
 
 loadPieMenus(){
-	;Copy global profiles to other profiles
+	; Copy global profiles to other profiles
 	for k, pieKey in Settings.appProfiles[1].pieKeys
 	{
 		if (pieKey.globalMenu == true)
@@ -103,11 +106,10 @@ loadPieMenus(){
 		}
 	}	
 
-	
-	;Load app settings to hotkeys
+	; Load app settings to hotkeys
     appProfiles := Settings.appProfiles    
     for k, profile in appProfiles {	
-		profile.pieEnableKey.enableState := false	;add enableState key to every profile.  Only for visual.
+		profile.pieEnableKey.enableState := false	; add enableState key to every profile.  Only for visual.
 		if (profile.enable == false)
 			continue
 		if (profile.ahkHandles[1] == "ahk_group regApps")
@@ -120,7 +122,7 @@ loadPieMenus(){
 					continue							
 				Hotkey, % pieKey.hotkey, pieLabel
 				If (profile.pieEnableKey.useEnableKey == true) && (profile.pieEnableKey.toggle == false)
-					{ ;initialize off if modkey active no toggle				
+					{ ; initialize off if modkey active no toggle				
 					Hotkey, % pieKey.hotkey, Off
 					}
 				}			
@@ -142,8 +144,8 @@ loadPieMenus(){
 		{
 		for ahkHandleIndex, ahkHandle in profile.ahkHandles
 			{
-				; profile.ahkHandles[ahkHandleIndex] := "ahk_exe " . ahkHandle ;Append the ahk_exe tag to all profiles
-				profile.ahkHandles[ahkHandleIndex] := appendAHKTag(ahkHandle) ;Append the ahk_exe tag to all profiles
+				; profile.ahkHandles[ahkHandleIndex] := "ahk_exe " . ahkHandle ; Append the ahk_exe tag to all profiles
+				profile.ahkHandles[ahkHandleIndex] := appendAHKTag(ahkHandle) ; Append the ahk_exe tag to all profiles
 				fullAHKHandle := profile.ahkHandles[ahkHandleIndex]
 				; msgbox, % fullAHKHandle	
 				GroupAdd, regApps, % fullAHKHandle 
@@ -155,7 +157,7 @@ loadPieMenus(){
 						continue							
 					Hotkey, % pieKey.hotkey, pieLabel
 					If (profile.pieEnableKey.useEnableKey == true) && (profile.pieEnableKey.toggle == false)
-						{ ;initialize off if modkey active no toggle				
+						{ ; initialize off if modkey active no toggle				
 						Hotkey, % pieKey.hotkey, Off
 						}
 					}			
@@ -189,7 +191,7 @@ loadSliceHotkeys(activePieMenu, hotkeysOn){
 	if (lastActivePieMenu != activePieMenu){
 		for k, key in ActivePieSliceHotkeyArray
 		{
-			;If hotkey is in another pie menu, continue			
+			; If hotkey is in another pie menu, continue			
 			if ( !hasValue(key, profileKeyArray) )
 				Hotkey, % key, Off
 			else
@@ -200,7 +202,7 @@ loadSliceHotkeys(activePieMenu, hotkeysOn){
 		for k, func in activePieMenu.functions
 		{
 			if (func.hotkey != ""){
-				;If hotkey is in another pie menu, don't switch it
+				; If hotkey is in another pie menu, don't switch it
 				if ( !hasValue(func.hotkey, profileKeyArray) ){
 					Hotkey, % func.hotkey, blockLabel
 					Hotkey, % func.hotkey, On
@@ -209,13 +211,13 @@ loadSliceHotkeys(activePieMenu, hotkeysOn){
 			}
 		}		
 		lastActivePieMenu := activePieMenu
-		;turn previous menu hotkeys off
-		;turn new hotkey on		
+		; turn previous menu hotkeys off
+		; turn new hotkey on		
 	} else if (hotkeysOn == false){
-		;turn activePieMenu keys off
+		; turn activePieMenu keys off
 		for k, key in ActivePieSliceHotkeyArray
 		{	
-			;If hotkey is in another pie menu, continue	
+			; If hotkey is in another pie menu, continue	
 			if ( !hasValue(key, profileKeyArray) )
 				Hotkey, % key, Off
 			else
@@ -235,20 +237,20 @@ loadSliceHotkeys(activePieMenu, hotkeysOn){
 Class UserPieFunctions {
 	load(){		
 		fileChanged := false
-		;Determine if custom functions changed
-		;Check if file text and JSON string are equivalent.
+		; Determine if custom functions changed
+		; Check if file text and JSON string are equivalent.
 
 		if (changed){
 			this.createFile()			
-			Reload ;Restart
+			Reload ; Restart
 		} else {
 			return
 		}
 
 	}
 	createFile(){
-		;Load from settings OBJ functionconfig
-		;replace the UserPieFunctions.ahk file with JSON text.			
+		; Load from settings OBJ functionconfig
+		; replace the UserPieFunctions.ahk file with JSON text.			
 
 	}
 	
@@ -297,7 +299,7 @@ pieTipText(text)
 	EndDrawGDIP()
 	}
 
-RGBAtoHEX(RGBA) ;Converts RGBA array to HEX ARGB
+RGBAtoHEX(RGBA) ; Converts RGBA array to HEX ARGB
 	{
 	rHex := Format("0x{4:02x}{1:02x}{2:02x}{3:02x}`r`n", RGBA*)
 	return rHex
@@ -324,7 +326,7 @@ getActiveMonitorDPI(position=false){
 	
 	if (substr(a_osversion, 1, 2) = "10")
 	{	
-	;detemine what monitor the mouse is in and scale factor
+	; detemine what monitor the mouse is in and scale factor
 	; pieDPIScale := 1
 	Mon.pieDPIScale := 1
 	for monIndex in monitorManager.monitors
@@ -342,7 +344,7 @@ getActiveMonitorDPI(position=false){
 	}
 	else
 	{
-		;Win7 DPI Scaling (takes value of primary monitor)
+		; Win7 DPI Scaling (takes value of primary monitor)
 		Mon.pieDPIScale := A_ScreenDPI / 96
 	}
 	return Mon.pieDPIScale
@@ -351,7 +353,7 @@ getActiveMonitorDimensions()
 	{
 	if (substr(a_osversion, 1, 2) = "10")
 	{	
-	;detemine what monitor the mouse is in and scale factor
+	; detemine what monitor the mouse is in and scale factor
 	; pieDPIScale := 1
 	
 	MouseGetPos, mouseX, mouseY
@@ -392,7 +394,7 @@ runPieMenu(profileNum, index, activePieNum=1)
 		SubPieLocX := p3_dimensions[1]
 		SubPieLocY := p3_dimensions[2]
 	} else {
-		MouseGetPos, PieOpenLocX, PieOpenLocY ;global	
+		MouseGetPos, PieOpenLocX, PieOpenLocY ; global	
 		SubPieLocX := PieOpenLocX
 		SubPieLocY := PieOpenLocY
 	}
@@ -401,20 +403,20 @@ runPieMenu(profileNum, index, activePieNum=1)
 	ActivePieNumber := activePieNum
 	activePie := activePieKey.pieMenus[ActivePieNumber]	
 
-	getActiveMonitorDPI() ;set Mon.pieDPIScale	
+	getActiveMonitorDPI() ; set Mon.pieDPIScale	
 
 	getBitmapPadding(activePie)
 	
 	SetUpGDIP(PieOpenLocX-BitmapPadding[1], PieOpenLocY-BitmapPadding[2], 2*BitmapPadding[1], 2*BitmapPadding[2])
 	StartDrawGDIP()
 
-	;Init Click related variables
-	; pieClicked := false ;This is not used anywhere
+	; Init Click related variables
+	; pieClicked := false ; This is not used anywhere
 
 	LButtonPressed := false
 	LButtonPressed_LastState := false
 	LButtonPressed_static := false
-	pieFunctionClicked := false ;Has a pie function been clicked on
+	pieFunctionClicked := false ; Has a pie function been clicked on
 	pieKeyReleased := false
 	pieKeyAction := activePieKey.activationMode.pieKeyAction
 	
@@ -422,7 +424,7 @@ runPieMenu(profileNum, index, activePieNum=1)
 	sliceHotkeyPressed := false
 	PieMenuRanWithMod := true
 
-	;Determine pie menu angles for some reason, maybe delete
+	; Determine pie menu angles for some reason, maybe delete
 	; thetaOffset := 0
 	thetaOffset := activePie.pieAngle
 	; offsetPie := []
@@ -483,14 +485,14 @@ runPieMenu(profileNum, index, activePieNum=1)
 						selectionRadius := ((activePie.radius)*Mon.pieDPIScale)						
 						numSlices := activePie.functions.Length()+1
 
-						;Set Slice Hotkeys
+						; Set Slice Hotkeys
 						; loadSliceHotkeys(activePieMenu, true)
 
-						;Escape radius
+						; Escape radius
 						If (activePieKey.activationMode.escapeRadius.enable && (mouse.distance > activePieKey.activationMode.escapeRadius.radius)) || (Settings.global.enableEscapeKeyMenuCancel && GetKeyState("Esc", "P")) 
 						{														
 							exitPieMenu(activePie)							
-							loop ;Wait for hotkey to be released
+							loop ; Wait for hotkey to be released
 							{
 								if !GetKeyState(pieHotkey, "P")
 									Break
@@ -511,7 +513,7 @@ runPieMenu(profileNum, index, activePieNum=1)
 						}
 
 						If (A_Index == 1)
-							loadSliceHotkeys(activePie, true)	;doesn't this only need to happen once?  TEST
+							loadSliceHotkeys(activePie, true)	; doesn't this only need to happen once?  TEST
 
 						if ( hasValue(PressedSliceHotkeyName, ActivePieSliceHotkeyArray)){	
 							; showArray(ActivePieSliceHotkeyArray)
@@ -547,7 +549,7 @@ runPieMenu(profileNum, index, activePieNum=1)
 							LButtonPressed := false	
 
 
-						If (pieRegion != fPieRegion) or (LButtonPressed_LastState != LButtonPressed) or (pieLabelShown == true) or (updatePie) or sliceHotkeyPressed ;If region or mouseclick changes
+						If (pieRegion != fPieRegion) or (LButtonPressed_LastState != LButtonPressed) or (pieLabelShown == true) or (updatePie) or sliceHotkeyPressed ; If region or mouseclick changes
 							{
 							pieLabelShown := false
 
@@ -599,7 +601,7 @@ runPieMenu(profileNum, index, activePieNum=1)
 							}
 						LButtonPressed_LastState := LButtonPressed
 						sleep, 1											
-					} ;loop end
+					} ; loop end
 					StartDrawGDIP()	
 					ClearDrawGDIP()
 					EndDrawGDIP()
@@ -619,7 +621,7 @@ runPieMenu(profileNum, index, activePieNum=1)
 
 						if (hoverToSelectActive == false)
 						{
-							if (!GetKeyState(pieHotkey, "P")) ;May have to remove modifier flags.						
+							if (!GetKeyState(pieHotkey, "P")) ; May have to remove modifier flags.						
 								{									
 									if (activePie.functions[pieRegion+1].function != "submenu")
 										break
@@ -630,7 +632,7 @@ runPieMenu(profileNum, index, activePieNum=1)
 							if (!GetKeyState(removeCharacters(pieHotkey, "+^!#"), "P")){
 								pieKeyReleased := true
 							}
-							; if (fPieRegion == 0) ;This kind of fixed the menus but something else is making it continuously refresh
+							; if (fPieRegion == 0) ; This kind of fixed the menus but something else is making it continuously refresh
 							; {								
 							; 	updatePie := true
 							; }								
@@ -646,13 +648,13 @@ runPieMenu(profileNum, index, activePieNum=1)
 									
 						if (LButtonPressed == false)
 							mouse := getMouseTransformProperties(false, activePieKey.activationMode.decoupleMouse)
-						;Load Slice Hotkeys						
+						; Load Slice Hotkeys						
 						
-						;Escape Radius cancel, ESC or pieKey exit
+						; Escape Radius cancel, ESC or pieKey exit
 						If (activePieKey.activationMode.escapeRadius.enable && (mouse.distance > activePieKey.activationMode.escapeRadius.radius)) || (Settings.global.enableEscapeKeyMenuCancel && GetKeyState("Esc", "P")) || (pieKeyAction == "Exit Menu" && GetKeyState(removeCharacters(pieHotkey, "+^!#"), "P") && hoverToSelectActive && pieKeyReleased) 
 						{							
 							exitPieMenu(activePie)					
-							loop ;Wait for hotkey to be released
+							loop ; Wait for hotkey to be released
 							{
 								If !GetKeyState(removeCharacters(pieHotkey, "+^!#"), "P")
 									Break
@@ -674,9 +676,9 @@ runPieMenu(profileNum, index, activePieNum=1)
 								pieRegion := 1
 						}
 
-						;Use LSlice Hotkey
+						; Use LSlice Hotkey
 						If (A_Index == 1)
-							loadSliceHotkeys(activePie, true) ;TEST
+							loadSliceHotkeys(activePie, true) ; TEST
 						
 						
 						
@@ -719,7 +721,7 @@ runPieMenu(profileNum, index, activePieNum=1)
 						if (hoverToSelectActive == true) && (mouse.distance > selectionRadius) && (updatePie == false)
 							{								
 								if activePie.functions[pieRegion+1].function != "submenu"
-									break ;Launches function
+									break ; Launches function
 								else
 								{									
 									updatePie := true
@@ -729,21 +731,21 @@ runPieMenu(profileNum, index, activePieNum=1)
 							}						 
 			
 						
-						; If (pieRegion != fPieRegion) or (LButtonPressed_LastState != LButtonPressed) or (pieLabelShown == true) or GetKeyState("q", "P") ;If region or mouseclick changes, redraw menu
+						; If (pieRegion != fPieRegion) or (LButtonPressed_LastState != LButtonPressed) or (pieLabelShown == true) or GetKeyState("q", "P") ; If region or mouseclick changes, redraw menu
 						; msgbox, % "pieRegion=" pieRegion . "`nfPieRegion= " . fPieRegion
 
-						If (pieRegion != fPieRegion) or (LButtonPressed_LastState != LButtonPressed) or (pieLabelShown == true) or (updatePie == true) ;If region or mouseclick changes, redraw menu
+						If (pieRegion != fPieRegion) or (LButtonPressed_LastState != LButtonPressed) or (pieLabelShown == true) or (updatePie == true) ; If region or mouseclick changes, redraw menu
 							{								
 							pieLabelShown := false	
 							; msgbox, % "pieRegion=" pieRegion . "`nfPieRegion= " . fPieRegion . "`nButtons= " . (LButtonPressed_LastState != LButtonPressed) . "`npieLabelShown=" . pieLabelShown . "`nupdatePie=" . updatePie
 							
-							; if (ActivePieNumber != lastActivePieNumber){  ;Testing submenus
+							; if (ActivePieNumber != lastActivePieNumber){  ; Testing submenus
 							; 	msgbox, % ActivePieNumber
 							; }
 							; lastActivePieNumber := ActivePieNumber
 
 
-							;Handle Submenu selection							
+							; Handle Submenu selection							
 							; If ( (activePie.functions[pieRegion+1].function == "submenu") && (fPieRegion == 0) && (hoverToSelectActive == true) or ((activePie.functions[pieRegion+1].function == "submenu") && (updatePie == true)))
 							; If ( (activePie.functions[pieRegion+1].function == "submenu") && (mouse.distance > selectionRadius) && (hoverToSelectActive == true)) or ((activePie.functions[pieRegion+1].function == "submenu") && (updatePie == true))
 							If ( (activePie.functions[pieRegion+1].function == "submenu") && (mouse.distance > selectionRadius) && (hoverToSelectActive == true)) or ((activePie.functions[pieRegion+1].function == "submenu") && (updatePie == true))
@@ -777,7 +779,7 @@ runPieMenu(profileNum, index, activePieNum=1)
 								EndDrawGDIP()
 								SetUpGDIP(SubPieLocX-BitmapPadding[1], SubPieLocY-BitmapPadding[2], 2*BitmapPadding[1], 2*BitmapPadding[2])	
 							}							
-							updatePie := false	;oh this is actually useful							
+							updatePie := false	; oh this is actually useful							
 
 							StartDrawGDIP()
 							pieRegion := fPieRegion	
@@ -800,7 +802,7 @@ runPieMenu(profileNum, index, activePieNum=1)
 						
 						LButtonPressed_LastState := LButtonPressed
 						sleep, 1																
-					} ;Loop end
+					} ; Loop end
 					StartDrawGDIP()	
 					ClearDrawGDIP()
 					EndDrawGDIP()
@@ -814,7 +816,7 @@ runPieMenu(profileNum, index, activePieNum=1)
 				}
 			case 3: ; Hover over all
 				{
-					;This becomes case 2
+					; This becomes case 2
 				}
 			case 4: ; Click all
 				{
@@ -836,12 +838,12 @@ runPieMenu(profileNum, index, activePieNum=1)
 						if (LButtonPressed == false)
 							mouse := getMouseTransformProperties(false, activePieKey.activationMode.decoupleMouse)
 
-						;Escape Radius cancel, ESC or pieKey exit
+						; Escape Radius cancel, ESC or pieKey exit
 						If (activePieKey.activationMode.escapeRadius.enable && (mouse.distance > activePieKey.activationMode.escapeRadius.radius)) || (Settings.global.enableEscapeKeyMenuCancel && GetKeyState("Esc", "P")) || (pieKeyAction == "Exit Menu" && GetKeyState(removeCharacters(pieHotkey, "+^!#"), "P") && pieKeyReleased) 
 						{
 							
 							exitPieMenu(activePie)							
-							loop ;Wait for hotkey to be released
+							loop ; Wait for hotkey to be released
 							{
 								If !GetKeyState(removeCharacters(pieHotkey, "+^!#"), "P")
 									Break
@@ -849,12 +851,12 @@ runPieMenu(profileNum, index, activePieNum=1)
 							return false						
 						}					
 						
-							;Just restarts menu considering pie key is held down.							
+							; Just restarts menu considering pie key is held down.							
 							
 						selectionRadius := ((activePie.radius)*Mon.pieDPIScale)						
 						numSlices := activePie.functions.Length()+1
 
-						;Set Slice Hotkeys
+						; Set Slice Hotkeys
 						; loadSliceHotkeys(activePieMenu, true)
 
 						If (mouse.distance < selectionRadius)
@@ -900,7 +902,7 @@ runPieMenu(profileNum, index, activePieNum=1)
 							LButtonPressed := false	
 
 
-						If (pieRegion != fPieRegion) or (LButtonPressed_LastState != LButtonPressed) or (pieLabelShown == true) or (updatePie) or sliceHotkeyPressed ;If region or mouseclick changes
+						If (pieRegion != fPieRegion) or (LButtonPressed_LastState != LButtonPressed) or (pieLabelShown == true) or (updatePie) or sliceHotkeyPressed ; If region or mouseclick changes
 							{
 							pieLabelShown := false
 						
@@ -973,7 +975,7 @@ runPieMenu(profileNum, index, activePieNum=1)
 							}
 						LButtonPressed_LastState := LButtonPressed
 						sleep, 1											
-					} ;loop end
+					} ; loop end
 					StartDrawGDIP()	
 					ClearDrawGDIP()
 					EndDrawGDIP()
@@ -1021,9 +1023,9 @@ runPieMenu(profileNum, index, activePieNum=1)
 						if (LButtonPressed = false)
 							mouse := getMouseTransformProperties(false, activePieKey.activationMode.decoupleMouse)
 
-						;Calculate Distance and Angle
+						; Calculate Distance and Angle
 
-						;if inside circle
+						; if inside circle
 						menuShape := runningPieKey.menuShape.mainMenu
 						If (mouse.distance <= (((menuShape.radius/2)+(menuShape.thickness/2))*Mon.pieDPIScale) or mouse.midDistance <= (((menuShape.radius/2)+(menuShape.thickness/2))*Mon.pieDPIScale))
 						{
@@ -1037,7 +1039,7 @@ runPieMenu(profileNum, index, activePieNum=1)
 						}
 						if (armPie3 != true) && (pieRegion > 0) ; If out of middle and pie 1 or 2
 							{
-							;Refactor Me!!
+							; Refactor Me!!
 							atheta := (leftTheta - mouse.theta - 180)
 							deltaTheta := atheta - (Floor(atheta / 360) * 360)
 							if deltaTheta between 0 and 90
@@ -1061,7 +1063,7 @@ runPieMenu(profileNum, index, activePieNum=1)
 								}		
 							}
 
-						;If LButton down - Change State and launch function maybe consider getting this out of the loop
+						; If LButton down - Change State and launch function maybe consider getting this out of the loop
  
 						If (GetKeyState("LButton","P"))		
 						{
@@ -1071,18 +1073,18 @@ runPieMenu(profileNum, index, activePieNum=1)
 						else
 							LButtonPressed := false
 
-						; If (pieRegion != fPieRegion) ;If region changes
-						If (pieRegion != fPieRegion) or (LButtonPressed_LastState != LButtonPressed) or (pieLabelShown := true) ;If region changes or mouseclick changes
+						; If (pieRegion != fPieRegion) ; If region changes
+						If (pieRegion != fPieRegion) or (LButtonPressed_LastState != LButtonPressed) or (pieLabelShown := true) ; If region changes or mouseclick changes
 							{
 							pieLabelShown := false
-							;;If you leave the center
+							; ;If you leave the center
 							If (pieRegion > 0) && (fPieRegion == 0)
 								{
 								if (runningPieKey.pieMenus[2].enable)
 									armPie2 := true
 								leftTheta := mouse.theta
 								}
-							;Check armed pie when return to circle
+							; Check armed pie when return to circle
 							if (fPieRegion > 0) && (pieRegion == 0)
 								{
 								if (armPie3 == true) && (runningPieKey.pieMenus[3].enable)
@@ -1102,7 +1104,7 @@ runPieMenu(profileNum, index, activePieNum=1)
 							}
 						LButtonPressed_LastState := LButtonPressed
 						sleep, 5		
-						} ;end pie loop
+						} ; end pie loop
 
 					StartDrawGDIP()	
 					ClearDrawGDIP()
@@ -1159,7 +1161,7 @@ getMouseTransformProperties(init:=false, forceZeroDistance:=false)
 		midMouseY := ( ( mouseY + midMouseY ) / 2)
 		}	
 	midDist := (Sqrt((Abs(midMouseX-SubPieLocX)**2) + (Abs(midMouseY-SubPieLocY)**2)))
-	;Calculate Distance and Angle
+	; Calculate Distance and Angle
 	dist := (Sqrt((Abs(mouseX-SubPieLocX)**2) + (Abs(mouseY-SubPieLocY)**2)))
 	
 	theta := cycleRange(calcAngle(SubPieLocX, SubPieLocY, mouseX, mouseY)+90)
@@ -1169,7 +1171,7 @@ getMouseTransformProperties(init:=false, forceZeroDistance:=false)
 	returnObj["midX"] := midMouseX
 	returnObj["midY"] := midMouseY	
 	returnObj["theta"] := theta
-	;If Mouse decouple
+	; If Mouse decouple
 	If (forceZeroDistance)
 	{
 		returnObj["midDistance"] := 0
@@ -1198,7 +1200,7 @@ extendAlongAngle(iPos, theta, distance)
 
 drawPie(appProfile, activePieProfile, xPos, yPos, dist, theta, thetaOffset, clicked:=false, drawLabel:=true, drawIndicator:=true)
 	{
-	;init local variables
+	; init local variables
 	numSlices := activePieProfile.functions.Length()-1
 
 	radius := (activePieProfile.radius)*Mon.pieDPIScale	
@@ -1219,10 +1221,10 @@ drawPie(appProfile, activePieProfile, xPos, yPos, dist, theta, thetaOffset, clic
 	Gdip_SetSmoothingMode(G, 4)
 	basicPen := Gdip_CreatePen(RGBAtoHEX(bgColor), thickness)
 	basicPenThin := Gdip_CreatePen(RGBAtoHEX(bgColor), thickness/2)	
-	basicBrush := Gdip_BrushCreateSolid(RGBAtoHEX([0,0,0,1])) ;set last value to non-zero to see rect, issue 0 means no rect is created
+	basicBrush := Gdip_BrushCreateSolid(RGBAtoHEX([0,0,0,1])) ; set last value to non-zero to see rect, issue 0 means no rect is created
 	; Gdip_DrawEllipse(G, basicPen, (gmx-(radius / 2)), (gmy-(radius / 2)), radius, radius)
 	
-	Gdip_FillRectangle(G, basicBrush, 0,0,BitmapPadding[1]*2,BitmapPadding[2]*2) ;BitmapPadding copy	
+	Gdip_FillRectangle(G, basicBrush, 0,0,BitmapPadding[1]*2,BitmapPadding[2]*2) ; BitmapPadding copy	
 	; Gdip_DrawEllipse(G, basicPen, (gmx-((radius)+ (thickness / 2))), (gmy-((radius)+ (thickness / 2))), 2*radius+thickness, 2*radius+thickness)	
 	Gdip_DrawEllipse(G, basicPen, (gmx-((radius)+ (thickness / 2))), (gmy-((radius)+ (thickness / 2))), 2*radius+thickness, 2*radius+thickness)	
 
@@ -1242,11 +1244,11 @@ drawPie(appProfile, activePieProfile, xPos, yPos, dist, theta, thetaOffset, clic
 		pieRegion := Floor(cycleRange(theta-thetaOffset)/(360/numSlices))+1	
 		; pieRegion := nTheta/(360/numSlices)
 		}
-	;Draw pie slice indicators
+	; Draw pie slice indicators
 
 	
 	
-	;Draw pie labels
+	; Draw pie labels
 
 	; if(drawLabel == true)
 	if(true)
@@ -1266,7 +1268,7 @@ drawPie(appProfile, activePieProfile, xPos, yPos, dist, theta, thetaOffset, clic
 				Gdip_DrawArc(G, basicPen, (gmx-((radius)+ (thickness / 2))), (gmy-((radius)+ (thickness / 2))), 2*radius+thickness, 2*radius+thickness, (labelTheta-90)+(180/numSlices), 3*(Mon.pieDPIScale))
 			}
 
-			if (activePieProfile.functions[A_Index+1].function == "submenu") ;Shouldn't make mark when you don't hover over the mode.
+			if (activePieProfile.functions[A_Index+1].function == "submenu") ; Shouldn't make mark when you don't hover over the mode.
 			{
 				Gdip_DrawArc(G, basicPen, (gmx-((radius)+ (thickness / 2))), (gmy-((radius)+ (thickness / 2))), 2*radius+thickness, 2*radius+thickness, (labelTheta-90)-(180/numSlices), 3*Mon.pieDPIScale)
 				Gdip_DrawArc(G, basicPen, (gmx-((radius)+ (thickness / 2))), (gmy-((radius)+ (thickness / 2))), 2*radius+thickness, 2*radius+thickness, (labelTheta-90)+(180/numSlices), 3*Mon.pieDPIScale)
@@ -1277,7 +1279,7 @@ drawPie(appProfile, activePieProfile, xPos, yPos, dist, theta, thetaOffset, clic
 		
 		; if activePieProfile.functions[A_Index].function == "submenu"
 		; {
-		; 	;Draw subMenuIndicator
+		; 	; Draw subMenuIndicator
 		; }
 
 		; msgbox, % labelTheta
@@ -1310,7 +1312,7 @@ drawPieLabel(activePieProfile, sliceFunction, xPos, yPos, selected:=0, anchor:="
 	sliceHotkey := sliceFunction.hotkey
 	innerWidthPadding := Ceil(6*(((Mon.pieDPIScale-1)/2)+1))
 
-	;Determine iconFolder
+	; Determine iconFolder
 	static iconFolder
 	static userIconFolder
 	userIconFolder := A_WorkingDir . "\icons"
@@ -1329,7 +1331,7 @@ drawPieLabel(activePieProfile, sliceFunction, xPos, yPos, selected:=0, anchor:="
 	strokeThickness := Settings.global.globalAppearance.labelStrokeThickness*Mon.pieDPIScale
 	safetyGreyColor := Settings.global.globalAppearance.safetyStrokeColor
 	textOptionsTest := % "x" xPos " y" yPos " Center vCenter c00FFFFFF r4 s" fontSize
-	textYOffset := Ceil(1*Mon.pieDPIScale) ;For slightly off center text
+	textYOffset := Ceil(1*Mon.pieDPIScale) ; For slightly off center text
 
 	Gdip_SetSmoothingMode(G, 4)
 	textHeight := Ceil(StrSplit(Gdip_TextToGraphics(G, "W", textOptionsTest, labelFont),"|")[3])
@@ -1341,7 +1343,7 @@ drawPieLabel(activePieProfile, sliceFunction, xPos, yPos, selected:=0, anchor:="
 		sliceHotkeyExists := false
 	}	
 	
-	;initialize element vars
+	; initialize element vars
 	labelElements := []
 	newElement := {}
 	iconFile := ""
@@ -1375,8 +1377,8 @@ drawPieLabel(activePieProfile, sliceFunction, xPos, yPos, selected:=0, anchor:="
 	if (labelElements.Length() == 0)
 		return
 
-	;get padding values, left align all and add in succession
-	;Determine Content Rect
+	; get padding values, left align all and add in succession
+	; Determine Content Rect
 	
 	
 	contentRect := [0,0]
@@ -1396,14 +1398,14 @@ drawPieLabel(activePieProfile, sliceFunction, xPos, yPos, selected:=0, anchor:="
 	; iconTextOffset := 0
 	; iconContentWidth := 0
 
-	;Determine Icon Folder:
+	; Determine Icon Folder:
 	
 
 	
 
 	if (selected == 1){
 		if (clicked == true){
-			;clicked color
+			; clicked color
 			strokeColor := RGBAtoHEX(activePieProfile.selectionColor)
 			labelBGColor := RGBAtoHEX(activePieProfile.selectionColor)
 			textColor := RGBAtoHEX(activePieProfile.backgroundColor)	
@@ -1416,19 +1418,19 @@ drawPieLabel(activePieProfile, sliceFunction, xPos, yPos, selected:=0, anchor:="
 			; textColor := RGBAtoHEX([255, 255, 255, 255])
 			textColor := RGBAtoHEX(activePieProfile.backgroundColor)
 			sliceHotkeyTextColor := RGBAtoHEX([activePieProfile.backgroundColor[1],activePieProfile.backgroundColor[2],activePieProfile.backgroundColor[3],128])	
-			;hover color
+			; hover color
 		}
 	}else{
 		strokeColor := RGBAtoHEX(safetyGreyColor)
 		labelBGColor := RGBAtoHEX(activePieProfile.backgroundColor)
 		textColor := RGBAtoHEX(activePieProfile.fontColor)
 		sliceHotkeyTextColor := RGBAtoHEX([activePieProfile.fontColor[1],activePieProfile.fontColor[2],activePieProfile.fontColor[3],128])
-		;resting color
+		; resting color
 	}
 		
 	outerRectSize := [Max(contentRect[1]+(2*pad[1]), minBoxWidth, contentRect[2]+(2*pad[2])), contentRect[2]+(2*pad[2])]	
 	
-	rectCenter := [xPos,yPos]	;if anchor is none of these, leave as center
+	rectCenter := [xPos,yPos]	; if anchor is none of these, leave as center
 	If (anchor == "left"){		
 		rectCenter := [xPos+(outerRectSize[1]/2)-(outerRectSize[2]/2), yPos]	
 	}			
@@ -1439,12 +1441,12 @@ drawPieLabel(activePieProfile, sliceFunction, xPos, yPos, selected:=0, anchor:="
 		
 	
 	basicPen := Gdip_CreatePen(strokeColor, strokeThickness)
-	otherPen := Gdip_CreatePen("0xFFff0000" , strokeThickness) ;May want to adjust
+	otherPen := Gdip_CreatePen("0xFFff0000" , strokeThickness) ; May want to adjust
 	basicBrush := Gdip_BrushCreateSolid(labelBGColor)
 	; Gdip_DrawRoundedRectangle(G, basicPen, rectCenter[1]-(outerRectSize[1]/2), rectCenter[2]-(outerRectSize[2]/2), outerRectSize[1], outerRectSize[2], (outerRectSize[2]/2)*(activePieProfile.labelRoundness/100))
 	Gdip_FillRoundedRectangle(G, basicBrush, rectCenter[1]-(outerRectSize[1]/2), rectCenter[2]-(outerRectSize[2]/2), outerRectSize[1], outerRectSize[2], (outerRectSize[2]/2)*(activePieProfile.labelRoundness/100))
 	
-	; basicBrush := Gdip_BrushCreateSolid(RGBAtoHEX([255,0,0,255])) ;Draw rectcenter locations
+	; basicBrush := Gdip_BrushCreateSolid(RGBAtoHEX([255,0,0,255])) ; Draw rectcenter locations
 	; Gdip_FillRoundedRectangle(G, basicBrush, xPos,yPos, 2, 2, 0)
 
 
@@ -1470,26 +1472,26 @@ drawPieLabel(activePieProfile, sliceFunction, xPos, yPos, selected:=0, anchor:="
 			Else
 				imageMatrix := 1
 			Gdip_DrawImage(G, pBitmaps, (iconPosition[1]-(iconSizeSquare/2)), (iconPosition[2]-(iconSizeSquare/2)), iconSizeSquare, iconSizeSquare,,,,,imageMatrix)
-			;add and draw icon
+			; add and draw icon
 			; elementPlacementPos := [elementPlacementPos[1]+iconSizeSquare+element.padding[1],elementPlacementPos[2]]
 			elementPlacementPos := [elementPlacementPos[1]+element.rect[1]+element.padding[1],elementPlacementPos[2]]
-			;set new place pos
+			; set new place pos
 		}
 		if (element.type == "labelText"){
 			; msgbox, % rectCenter[1]	
 			; textOptions := % "x" Ceil(elementPlacementPos[1]+(element.rect[1]/2)) " y" Ceil(rectCenter[2]-(element.rect[2]/2)+textYOffset) " Center vCenter c" SubStr(textColor,3) " r4 s" fontSize
 			textOptions := % "x" Ceil(elementPlacementPos[1]) " y" Ceil(rectCenter[2]-(element.rect[2]/2)+textYOffset) " Left vCenter c" SubStr(textColor,3) " r4 s" fontSize
 			; textOptions := % "x" (rectCenter[1]) " y" (rectCenter[2]) " Center vCenter c" SubStr(textColor,3) " r4 s" fontSize
-			;add and draw text
+			; add and draw text
 			Gdip_TextToGraphics(G, labelText, textOptions, labelFont)
-			;set new place pos
+			; set new place pos
 		}
 		if (element.type == "hotkeyText"){
 			; sliceHotkeyTextOptions := % "x" Ceil(rectCenter[1]+(contentRect[1]/2)-(element.rect[1]/2)) " y" Ceil(rectCenter[2]-(element.rect[2]/2)+textYOffset) " Center vCenter c" SubStr(sliceHotkeyTextColor,3) " r4 s" fontSize
 			sliceHotkeyTextOptions := % "x" Ceil(rectCenter[1]+(contentRect[1]/2)-(element.rect[1])) " y" Ceil(rectCenter[2]-(element.rect[2]/2)+textYOffset) " Left vCenter c" SubStr(sliceHotkeyTextColor,3) " r4 s" fontSize
 			Gdip_TextToGraphics(G, sliceHotkey, sliceHotkeyTextOptions, labelFont)
-			;add and draw text
-			;set new place pos
+			; add and draw text
+			; set new place pos
 		}
 	}	
 	return
@@ -1502,7 +1504,7 @@ notifyPieEnableState(state){
     } else {
         sFile := a_scriptdir . "\lib\PieEnableOff.png"
     }
-	getActiveMonitorDPI() ;Assigns Mon.pieDPIScale
+	getActiveMonitorDPI() ; Assigns Mon.pieDPIScale
 
     ; Gui, 1: -Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs -DPIScale
     ; Gui, 1: Show, NA        
@@ -1663,7 +1665,7 @@ runPieFunction(functionObj)
 	; 	}
 	if (functionObj.function = "repeatLastFunction")
 		{
-		;Determine timeOut 0 := Infinite or >0 := value
+		; Determine timeOut 0 := Infinite or >0 := value
 		repeatTimeOut := false	
 		If (functionObj.params.timeout > 0)
 			{
@@ -1701,7 +1703,7 @@ getActiveProfile()
 		}	
 	WinGet, activeWinProc, ProcessName, A
 	WinGetClass, activeWinClass, A
-	for profileIndex, profile in Settings.appProfiles ;Could refactor 
+	for profileIndex, profile in Settings.appProfiles ; Could refactor 
 		{
 		for ahkHandleIndex, ahkHandle in profile.ahkHandles
 			{
@@ -1723,7 +1725,7 @@ getActiveProfileString()
 		}	
 	WinGet, activeWinProc, ProcessName, A
 	WinGetClass, activeWinClass, A
-	for profileIndex, profile in Settings.appProfiles ;Could refactor 
+	for profileIndex, profile in Settings.appProfiles ; Could refactor 
 		{
 		for ahkHandleIndex, ahkHandle in profile.ahkHandles
 			{
@@ -1849,7 +1851,7 @@ class MonitorManager {
     ptr := A_PtrSize ? "Ptr" : "UInt"
     this.monitors := []
     DllCall("EnumDisplayMonitors", ptr, 0, ptr, 0, ptr, RegisterCallback("MonitorEnumProc", "", 4, &this), "UInt", 0)
-    ;; Solar: SysGet incorrectly identifies monitors (https://autohotkey.com/board/topic/66536-sysget-incorrectly-identifies-monitors/)
+    ; ; Solar: SysGet incorrectly identifies monitors (https://autohotkey.com/board/topic/66536-sysget-incorrectly-identifies-monitors/)
   }
 }
 
@@ -1860,7 +1862,7 @@ MonitorEnumProc(hMonitor, hdcMonitor, lprcMonitor, dwData) {
   b := NumGet(lprcMonitor + 0, 12, "Int")
   
   this := Object(A_EventInfo)
-  ;; Helgef: Allow RegisterCallback with BoundFunc objects (https://www.autohotkey.com/boards/viewtopic.php?p=235243#p235243)
+  ; ; Helgef: Allow RegisterCallback with BoundFunc objects (https://www.autohotkey.com/boards/viewtopic.php?p=235243#p235243)
   this.monitors.push(New Monitor(hMonitor, l, t, r, b))
 
 	Return, 1
@@ -1886,7 +1888,7 @@ mouseToCenterScreen(mouseMouse:=true){
 
 class Monitor {
   __New(handle, left, top, right, bottom) {
-    ;When compiled with true/pm these values are based on real pixel coordinates without scaling.
+    ; When compiled with true/pm these values are based on real pixel coordinates without scaling.
 	this.handle := handle
     this.left   := left
     this.top    := top
@@ -1907,7 +1909,7 @@ class Monitor {
   }
   
   getDpiForMonitor() {
-    ;; enum _MONITOR_DPI_TYPE
+    ; ; enum _MONITOR_DPI_TYPE
     MDT_EFFECTIVE_DPI := 0
     MDT_ANGULAR_DPI := 1
     MDT_RAW_DPI := 2
@@ -1918,7 +1920,7 @@ class Monitor {
     
     Return, {x: dpiX, y: dpiY}
   }
-  ;; InnI: Get per-monitor DPI scaling factor (https://www.autoitscript.com/forum/topic/189341-get-per-monitor-dpi-scaling-factor/?tab=comments#comment-1359832)
+  ; ; InnI: Get per-monitor DPI scaling factor (https://www.autoitscript.com/forum/topic/189341-get-per-monitor-dpi-scaling-factor/?tab=comments#comment-1359832)
 
 }
 
@@ -1939,7 +1941,7 @@ print(value,varName=""){
 	}
 	if (DebugMode == false)		
 		return		
-	if (IsObject(value)) ;Array or Object
+	if (IsObject(value)) ; Array or Object
 	{
 		showArrString := ""
 		for k, val in value
@@ -1959,7 +1961,7 @@ print(value,varName=""){
 		}
 		OutputDebug, % showArrString	
 		return
-	} else { ;Number or string
+	} else { ; Number or string
 		if(varName != ""){
 			value := varName . ": " . value
 		}
@@ -1968,7 +1970,7 @@ print(value,varName=""){
 	}	
 }
 
-;For mouseClick pie function
+; For mouseClick pie function
 lButtonWait(clickButton,sleepTime=3){	
 	loop
 		{
