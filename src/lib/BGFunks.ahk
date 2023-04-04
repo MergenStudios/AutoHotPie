@@ -1882,19 +1882,6 @@ blockBareKeys_2(hotkeyInput, hotkeyArray, blockState=true){
 
 class MonitorManager {
   __New() {
-    ;; enum _PROCESS_DPI_AWARENESS    
-	PROCESS_DPI_UNAWARE := 0
-    PROCESS_SYSTEM_DPI_AWARE := 1
-    PROCESS_PER_MONITOR_DPI_AWARE := 2
-    ; DllCall("SHcore\SetProcessDpiAwareness", "UInt", PROCESS_PER_MONITOR_DPI_AWARE)
-    ;; InnI: Get per-monitor DPI scaling factor (https://www.autoitscript.com/forum/topic/189341-get-per-monitor-dpi-scaling-factor/?tab=comments#comment-1359832)
-    DPI_AWARENESS_CONTEXT_UNAWARE := -1
-    DPI_AWARENESS_CONTEXT_SYSTEM_AWARE := -2
-    DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE := -3
-    DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 := -4
-    DllCall("User32\SetProcessDpiAwarenessContext", "UInt" , DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE)
-    ;; pneumatic: -DPIScale not working properly (https://www.autohotkey.com/boards/viewtopic.php?p=241869&sid=abb2db983d2b3966bc040c3614c0971e#p241869)
-    
     ptr := A_PtrSize ? "Ptr" : "UInt"
     this.monitors := []
     DllCall("EnumDisplayMonitors", ptr, 0, ptr, 0, ptr, RegisterCallback("MonitorEnumProc", "", 4, &this), "UInt", 0)
@@ -1925,8 +1912,7 @@ getBitmapPadding(activePieObj){
 
 mouseToCenterScreen(mouseMouse:=true){
 	p2_dimensions := getActiveMonitorDimensions()
-	; msgbox, % p2_dimensions[1]
-	; msgbox, % p2_dimensions[2]
+
 	
 	If (mouseMouse)
 		MouseMove, p2_dimensions[1]+((p2_dimensions[2]-p2_dimensions[1])/2), p2_dimensions[3]+((p2_dimensions[4]-p2_dimensions[3])/2), 0

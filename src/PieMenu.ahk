@@ -15,7 +15,8 @@ SetControlDelay, 0	; Changed to 0 upon recommendation of documentation
 
 
 ;Set Per monitor DPI awareness: https://www.autohotkey.com/boards/viewtopic.php?p=295182#p295182
-DllCall("SetThreadDpiAwarenessContext", "ptr", -3, "ptr")
+DllCall("User32\SetProcessDpiAwarenessContext", "UInt", -3)
+
 CoordMode, Mouse, Screen
 SetTitleMatchMode, RegEx ;May not need this anymore
 
