@@ -1,22 +1,20 @@
 ﻿; util
-removeCharacters(var, chars="+^!#")
-	{
+removeCharacters(var, chars="+^!#"){
 	   stringreplace,var,var,%A_space%,_,a
 	   loop, parse, chars,
 	      stringreplace,var,var,%A_loopfield%,,a
 	   return var
-	}
+}
 
 ; util
-calcAngle(aX, aY, bX, bY)
-	{
+calcAngle(aX, aY, bX, bY) {
 	initVal := (dllcall("msvcrt\atan2","Double",(bY-aY), "Double",(bX-aX), "CDECL Double")*57.29578)
 	if initVal < 0
 		returnVal := (initVal+360)
 	Else
 		returnVal := initVal
 	return returnVal
-	}
+}
 
 ; util
 checkAHK()
@@ -175,6 +173,7 @@ loadPieMenus(){
 	}
 }
 
+; Register/Reset the hotkeys that activate specific slices
 loadSliceHotkeys(activePieMenu, hotkeysOn) {
 	global SliceHotkeyPressed
 
@@ -226,70 +225,20 @@ loadSliceHotkeys(activePieMenu, hotkeysOn) {
 	}	
 }
 
-Class UserPieFunctions {
-	load(){		
-		fileChanged := false
-		; Determine if custom functions changed
-		; Check if file text and JSON string are equivalent.
-
-		if (changed){
-			this.createFile()			
-			Reload ; Restart
-		} else {
-			return
-		}
-
-	}
-	createFile(){
-		; Load from settings OBJ functionconfig
-		; replace the UserPieFunctions.ahk file with JSON text.			
-
-	}
-	
-}
-
-copyFilesAndFolders(SourcePattern, DestinationFolder, DoOverwrite = false)
-	{
-    ; First copy all the files (but not the folders):
-    FileCopy, %SourcePattern%, %DestinationFolder%, %DoOverwrite%
-    ErrorCount := ErrorLevel
-    ; Now copy all the folders:
-    Loop, %SourcePattern%, 2  ; 2 means "retrieve folders only".
-    {
-        FileCopyDir, %A_LoopFileFullPath%, %DestinationFolder%\%A_LoopFileName%, %DoOverwrite%
-        ErrorCount += ErrorLevel
-        if ErrorLevel  ; Report each problem folder by name.
-            MsgBox Could not copy %A_LoopFileFullPath% into %DestinationFolder%.
-    }
-    return ErrorCount
-	}
-
-
-EmptyMem(){
-    pid:= DllCall("GetCurrentProcessId")
-    h:=DllCall("OpenProcess", "UInt", 0x001F0FFF, "Int", 0, "Int", pid)
+; util
+EmptyMem() {
+    pid := DllCall("GetCurrentProcessId")
+    h := DllCall("OpenProcess", "UInt", 0x001F0FFF, "Int", 0, "Int", pid)
     DllCall("SetProcessWorkingSetSize", "UInt", h, "Int", -1, "Int", -1)
     DllCall("CloseHandle", "Int", h)
 }
 
-cycleRange(var, range=360){
+; util
+cycleRange(var, range=360) {
 	var := var - (range*Floor((var / range)))
 	return var
-	}
-pieTipText(text)
-	{
-	StartDrawGDIP()
-	ClearDrawGDIP()	
-	
-	Gdip_SetSmoothingMode(G, 4)
-	
-	TXo := A_ScreenWidth / 2
-	TYo := A_ScreenHeight - 100
-	textoptions = x%TXo% y%TYo% Center Vcenter cffffffff r4 s16
-	ToolTipText = %text%
-	Gdip_TextToGraphics(G, ToolTipText, textoptions)
-	EndDrawGDIP()
-	}
+}
+
 
 RGBAtoHEX(RGBA) ; Converts RGBA array to HEX ARGB
 	{
