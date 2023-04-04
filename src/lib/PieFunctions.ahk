@@ -17,19 +17,19 @@ pie_sendKey(keyObject)
 			bareKey := removeCharacters(key, "+^!#")			
 			startModifierString := ""                
 			endModifierString := ""
-			If (InStr(key,"#")){
+			if (InStr(key,"#")){
 				startModifierString := startModifierString . "{LWin down}"
 				endModifierString := endModifierString . "{LWin up}"					
 			}
-			If (InStr(key,"+")){                    
+			if (InStr(key,"+")){                    
 				startModifierString := startModifierString . "{shift down}"
 				endModifierString := endModifierString . "{shift up}"                    
 			}
-			If (InStr(key,"^")){
+			if (InStr(key,"^")){
 				startModifierString := startModifierString . "{ctrl down}"
 				endModifierString := endModifierString . "{ctrl up}"						
 			}
-			If (InStr(key,"!")){
+			if (InStr(key,"!")){
 				startModifierString := startModifierString . "{alt down}"
 				endModifierString := endModifierString . "{alt up}"					
 			}
@@ -99,7 +99,7 @@ pie_runScript(script)
 	script := script.filepath	
 	Try
 	{
-	If (SubStr(script, 1, 14) = "%A_WorkingDir%")
+	if (SubStr(script, 1, 14) = "%A_WorkingDir%")
 		run, % A_WorkingDir . SubStr(script, 15)
 	else
 		run, % script
@@ -204,14 +204,14 @@ pie_switchApplication(params){
 	multipleInstances := params.multipleInstanceApplication
 	SplitPath, % params.filePath, ahkHandle
 	ahkHandle := appendAHKTag(ahkHandle)
-	If (multipleInstances) {
+	if (multipleInstances) {
         groupName := StrReplace(SubStr(ahkHandle, InStr(ahkHandle," ")+1),".","")
-        If (GetKeyState("Ctrl", "P"))
+        if (GetKeyState("Ctrl", "P"))
         {            
             Run, %exePath%            
             GroupAdd, %groupName%, %ahkHandle%
         } Else {            
-            If !(WinExist(ahkHandle))
+            if !(WinExist(ahkHandle))
                 {
                 Run, %exePath%
                 GroupAdd, %groupName%, %ahkHandle%
@@ -227,7 +227,7 @@ pie_switchApplication(params){
                 WinActivate, %ahkHandle%
         }                 
     } Else {
-        If !WinExist(ahkHandle) {
+        if !WinExist(ahkHandle) {
             Run, %exePath%
         } Else {
             WinActivate, %ahkHandle%

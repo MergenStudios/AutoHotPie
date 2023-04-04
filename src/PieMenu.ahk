@@ -116,11 +116,11 @@ pieLabel: ; Fixed hotkey overlap "r and ^r", refactor this
 	
 	; msgbox, % ActivePieHotkey
 	; msgbox, % WinActive("ahk_exe explorer.exe")
-	If (!WinActive("ahk_group regApps"))
+	if (!WinActive("ahk_group regApps"))
 		{		
 		profileIndex := 1
 		ActiveProfile := Settings.appProfiles[1]
-		Hotkey, IfWinNotActive, ahk_group regApps		
+		Hotkey, ifWinNotActive, ahk_group regApps		
 		}
 	else ; Registered applications
 		{			
@@ -141,8 +141,8 @@ pieLabel: ; Fixed hotkey overlap "r and ^r", refactor this
 					{	
 						; msgbox, what					
 						ActiveProfile := profile						
-						; Hotkey, IfWinActive, % "ahk_exe " + activeWinProc
-						Hotkey, IfWinActive, % activeWinProc
+						; Hotkey, ifWinActive, % "ahk_exe " + activeWinProc
+						Hotkey, ifWinActive, % activeWinProc
 						break 2	
 					}
 				}
@@ -213,7 +213,7 @@ PressedSliceHotkeyName := A_ThisHotkey
 ; msgbox, % PressedSliceHotkeyName
 return
 
-#If DebugMode = true
+#if DebugMode = true
 {
 escape::
 exitapp
@@ -224,7 +224,7 @@ return
 ; I hate you so much... windows ink.
 ; 220705 - windows ink still makes me sad.
 
-#IfWinActive, ahk_exe AutoHotPie.exe
+#ifWinActive, ahk_exe AutoHotPie.exe
 ~LButton up::
 	sleep,200
 	if WinExist("ahk_exe AutoHotPie.exe")
@@ -235,7 +235,7 @@ return
 	if WinExist("AutoHotPie Uninstall")
 		exitapp
 	return
-#IfWinActive, ahk_exe Un_A.exe
+#ifWinActive, ahk_exe Un_A.exe
 ~LButton up::
 	sleep,100
 	if WinExist("AutoHotPie Uninstall")
@@ -246,7 +246,7 @@ return
 	if WinExist("AutoHotPie Uninstall")
 		exitapp
 	return
-#IfWinActive, AutoHotPie Setup
+#ifWinActive, AutoHotPie Setup
 ~LButton up::
 	sleep,100
 	if WinExist("AutoHotPie Setup")
@@ -258,7 +258,7 @@ return
 		exitapp
 	return
 
-#If (PieLaunchedState == 1)
+#if (PieLaunchedState == 1)
 LButton::
 	LMB.pressed := true
 	; PenClicked := true 
@@ -271,11 +271,11 @@ LButton up::
 	Return
 
 ; For mouseClick function
-#If (RemapLButton == "right")
+#if (RemapLButton == "right")
 LButton::RButton
-#If (RemapLButton == "middle")
+#if (RemapLButton == "middle")
 LButton::MButton
-#If ; This ends the context-sensitivity
+#if ; This ends the context-sensitivity
 
 SliceHotkeyPress:
 	SliceHotkey.pressed := true
@@ -296,7 +296,7 @@ if (settings.global.enableEscapeKeyMenuCancel)
 	PieLaunchedState := false
 return
 
-; If a display is connected or disconnected
+; if a display is connected or disconnected
 OnMessage(0x7E, "WM_DISPLAYCHANGE")
 return
 WM_DISPLAYCHANGE(wParam, lParam)

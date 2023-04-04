@@ -86,7 +86,7 @@ class JSON
 				} else {					
 					if InStr("{[", ch) {
 					; Check if Array() is overridden and if its return value has
-					; the 'IsArray' property. If so, Array() will be called normally,
+					; the 'IsArray' property. if so, Array() will be called normally,
 					; otherwise, use a custom base object for arrays
 						static json_array := Func("Array").IsBuiltIn || ![].IsArray ? {IsArray: true} : 0
 					
@@ -166,7 +166,7 @@ class JSON
 						}
 
 						next := holder==root ? "" : is_array ? ",]" : ",}"
-					} ; If InStr("{[", ch) { ... } else
+					} ; if InStr("{[", ch) { ... } else
 
 					is_array? key := ObjPush(holder, value) : holder[key] := value
 

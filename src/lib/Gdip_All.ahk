@@ -61,10 +61,10 @@
 ; Layeredh      			Height of the window
 ; Alpha         			Default = 255 : The transparency (0-255) to set the window transparency
 ;
-; return      				If the function succeeds, the return value is nonzero
+; return      				if the function succeeds, the return value is nonzero
 ;
-; notes						If x or y omitted, then layered window will use its current coordinates
-; 							If w or h omitted then current width and height will be used
+; notes						if x or y omitted, then layered window will use its current coordinates
+; 							if w or h omitted then current width and height will be used
 
 UpdateLayeredWindow(hwnd, hdc, x="", y="", w="", h="", Alpha=255)
 {
@@ -104,9 +104,9 @@ UpdateLayeredWindow(hwnd, hdc, x="", y="", w="", h="", Alpha=255)
 ; sy					y-coordinate of source upper-left corner
 ; Raster				raster operation code
 ;
-; return				If the function succeeds, the return value is nonzero
+; return				if the function succeeds, the return value is nonzero
 ;
-; notes					If no raster operation is specified, then SRCCOPY is used, which copies the source directly to the destination rectangle
+; notes					if no raster operation is specified, then SRCCOPY is used, which copies the source directly to the destination rectangle
 ;
 ; BLACKNESS				= 0x00000042
 ; NOTSRCERASE			= 0x001100A6
@@ -161,9 +161,9 @@ BitBlt(ddc, dx, dy, dw, dh, sdc, sx, sy, Raster="")
 ; sh					height of source rectangle
 ; Raster				raster operation code
 ;
-; return				If the function succeeds, the return value is nonzero
+; return				if the function succeeds, the return value is nonzero
 ;
-; notes					If no raster operation is specified, then SRCCOPY is used. It uses the same raster operations as BitBlt		
+; notes					if no raster operation is specified, then SRCCOPY is used. It uses the same raster operations as BitBlt		
 
 StretchBlt(ddc, dx, dy, dw, dh, sdc, sx, sy, sw, sh, Raster="")
 {
@@ -191,7 +191,7 @@ StretchBlt(ddc, dx, dy, dw, dh, sdc, sx, sy, sw, sh, Raster="")
 ; hdc					handle to the DC
 ; iStretchMode			The stretching mode, describing how the target will be stretched
 ;
-; return				If the function succeeds, the return value is the previous stretching mode. If it fails it will return 0
+; return				if the function succeeds, the return value is the previous stretching mode. if it fails it will return 0
 ;
 ; STRETCH_ANDSCANS 		= 0x01
 ; STRETCH_ORSCANS 		= 0x02
@@ -213,7 +213,7 @@ SetStretchBltMode(hdc, iStretchMode=4)
 ; hwnd					handle of the control to update
 ; hBitmap				a gdi bitmap to associate the static control with
 ;
-; return				If the function succeeds, the return value is nonzero
+; return				if the function succeeds, the return value is nonzero
 
 SetImage(hwnd, hBitmap)
 {
@@ -231,7 +231,7 @@ SetImage(hwnd, hBitmap)
 ; hwnd					handle of the control to update
 ; SysColor				A system colour to set to the control
 ;
-; return				If the function succeeds, the return value is zero
+; return				if the function succeeds, the return value is zero
 ;
 ; notes					A control must have the 0xE style set to it so it is recognised as a bitmap
 ; 						By default SysColor=15 is used which is COLOR_3DFACE. This is the standard background for a control
@@ -297,10 +297,10 @@ SetSysColorToControl(hwnd, SysColor=15)
 ; 						x|y|w|h = Take specific coordinates with a width and height
 ; Raster				raster operation code
 ;
-; return      			If the function succeeds, the return value is a pointer to a gdi+ bitmap
+; return      			if the function succeeds, the return value is a pointer to a gdi+ bitmap
 ; 						-1:		one or more of x,y,w,h not passed properly
 ;
-; notes					If no raster operation is specified, then SRCCOPY is used to the returned bitmap
+; notes					if no raster operation is specified, then SRCCOPY is used to the returned bitmap
 
 Gdip_BitmapFromScreen(Screen=0, Raster="")
 {
@@ -350,7 +350,7 @@ Gdip_BitmapFromScreen(Screen=0, Raster="")
 ;
 ; hwnd					handle to the window to get a bitmap from
 ;
-; return				If the function succeeds, the return value is a pointer to a gdi+ bitmap
+; return				if the function succeeds, the return value is a pointer to a gdi+ bitmap
 ;
 ; notes					Window must not be not minimised in order to get a handle to it's client area
 
@@ -484,7 +484,7 @@ CreateDIBSection(w, h, hdc="", bpp=32, ByRef ppvBits=0)
 ; hdc					A handle to the device context
 ; Flags					Drawing options
 ;
-; return				If the function succeeds, it returns a nonzero value
+; return				if the function succeeds, it returns a nonzero value
 ;
 ; PW_CLIENTONLY			= 1
 
@@ -502,7 +502,7 @@ PrintWindow(hwnd, hdc, Flags=0)
 ;
 ; hIcon					Handle to the icon to be destroyed. The icon must not be in use
 ;
-; return				If the function succeeds, the return value is nonzero
+; return				if the function succeeds, the return value is nonzero
 
 DestroyIcon(hIcon)
 {
@@ -532,7 +532,7 @@ CreateCompatibleBitmap(hdc, w, h)
 ;
 ; return				returns the handle to a device context or 0 on failure
 ;
-; notes					If this handle is 0 (by default), the function creates a memory device context compatible with the application's current screen
+; notes					if this handle is 0 (by default), the function creates a memory device context compatible with the application's current screen
 
 CreateCompatibleDC(hdc=0)
 {
@@ -547,7 +547,7 @@ CreateCompatibleDC(hdc=0)
 ; hdc					Handle to a DC
 ; hgdiobj				A handle to the object to be selected into the DC
 ;
-; return				If the selected object is not a region and the function succeeds, the return value is a handle to the object being replaced
+; return				if the selected object is not a region and the function succeeds, the return value is a handle to the object being replaced
 ;
 ; notes					The specified object must have been created by using one of the following functions
 ; 						Bitmap - CreateBitmap, CreateBitmapIndirect, CreateCompatibleBitmap, CreateDIBitmap, CreateDIBSection (A single bitmap cannot be selected into more than one DC at the same time)
@@ -556,7 +556,7 @@ CreateCompatibleDC(hdc=0)
 ; 						Pen - CreatePen, CreatePenIndirect
 ; 						Region - CombineRgn, CreateEllipticRgn, CreateEllipticRgnIndirect, CreatePolygonRgn, CreateRectRgn, CreateRectRgnIndirect
 ;
-; notes					If the selected object is a region and the function succeeds, the return value is one of the following value
+; notes					if the selected object is a region and the function succeeds, the return value is one of the following value
 ;
 ; SIMPLEREGION			= 2 Region consists of a single rectangle
 ; COMPLEXREGION			= 3 Region consists of more than one rectangle
@@ -590,7 +590,7 @@ DeleteObject(hObject)
 ; Description			This function retrieves a handle to a display device context (DC) for the client area of the specified window.
 ; 						The display device context can be used in subsequent graphics display interface (GDI) functions to draw in the client area of the window. 
 ;
-; hwnd					Handle to the window whose device context is to be retrieved. If this value is NULL, GetDC retrieves the device context for the entire screen					
+; hwnd					Handle to the window whose device context is to be retrieved. if this value is NULL, GetDC retrieves the device context for the entire screen					
 ;
 ; return				The handle the device context for the specified window's client area indicates success. NULL indicates failure
 
@@ -650,7 +650,7 @@ ReleaseDC(hdc, hwnd=0)
 ;
 ; hdc					A handle to the device context
 ;
-; return				If the function succeeds, the return value is nonzero
+; return				if the function succeeds, the return value is nonzero
 ;
 ; notes					An application must not delete a DC whose handle was obtained by calling the GetDC function. Instead, it must call the ReleaseDC function to free the DC
 
@@ -694,7 +694,7 @@ Gdip_LibrarySubVersion()
 ; File					The name of the file, or its number that you would like (This depends on alternate parameter)
 ; Alternate				Changes whether the File parameter is the file name or its number
 ;
-; return      			If the function succeeds, the return value is a pointer to a gdi+ bitmap
+; return      			if the function succeeds, the return value is a pointer to a gdi+ bitmap
 ; 						-1 = The BRA variable is empty
 ; 						-2 = The BRA has an incorrect header
 ; 						-3 = The BRA has information missing
@@ -735,7 +735,7 @@ Gdip_BitmapFromBRA(ByRef BRAFromMemIn, File, Alternate=0)
 	DllCall("GlobalUnlock", Ptr, hData)
 	DllCall("ole32\CreateStreamOnHGlobal", Ptr, hData, "int", 1, A_PtrSize ? "UPtr*" : "UInt*", pStream)
 	DllCall("gdiplus\GdipCreateBitmapFromStream", Ptr, pStream, A_PtrSize ? "UPtr*" : "UInt*", pBitmap)
-	If (A_PtrSize)
+	if (A_PtrSize)
 		%FName%(pStream)
 	Else
 		DllCall(NumGet(NumGet(1*pStream)+8), "uint", pStream)
@@ -1418,7 +1418,7 @@ Gdip_GraphicsClear(pGraphics, ARGB=0x00ffffff)
 ; pBitmap				Pointer to a bitmap to be blurred
 ; Blur					The Amount to blur a bitmap by from 1 (least blur) to 100 (most blur)
 ;
-; return				If the function succeeds, the return value is a pointer to the new blurred bitmap
+; return				if the function succeeds, the return value is a pointer to the new blurred bitmap
 ; 						-1 = The blur parameter is outside the range 1-100
 ;
 ; notes					This function will not dispose of the original bitmap
@@ -1455,9 +1455,9 @@ Gdip_BlurBitmap(pBitmap, Blur)
 ;   
 ; pBitmap				Pointer to a bitmap
 ; sOutput      			The name of the file that the bitmap will be saved to. Supported extensions are: .BMP,.DIB,.RLE,.JPG,.JPEG,.JPE,.JFIF,.GIF,.TIF,.TIFF,.PNG
-; Quality      			If saving as jpg (.JPG,.JPEG,.JPE,.JFIF) then quality can be 1-100 with default at maximum quality
+; Quality      			if saving as jpg (.JPG,.JPEG,.JPE,.JFIF) then quality can be 1-100 with default at maximum quality
 ;
-; return      			If the function succeeds, the return value is zero, otherwise:
+; return      			if the function succeeds, the return value is zero, otherwise:
 ; 						-1 = Extension supplied is not a supported file format
 ; 						-2 = Could not get a list of encoders on system
 ; 						-3 = Could not find matching encoder for specified file format
@@ -1481,7 +1481,7 @@ Gdip_SaveBitmapToFile(pBitmap, sOutput, Quality=75)
 	if !(nCount && nSize)
 		return -2
 	
-	If (A_IsUnicode){
+	if (A_IsUnicode){
 		StrGet_Name := "StrGet"
 		Loop, %nCount%
 		{

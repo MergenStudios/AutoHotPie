@@ -2,7 +2,7 @@
 	global
 	
 	; Start gdi+
-	If !pToken := Gdip_Startup()
+	if !pToken := Gdip_Startup()
 	{
 		MsgBox, 48, gdiplus error!, Gdiplus failed to start. Please ensure you have gdiplus on your system
 		ExitApp
@@ -27,13 +27,13 @@ SetUpGDIP(iOriginX=-1, iOriginY=-1, iWidth=-1, iHeight=-1, iToggle="Show") {
 	Width := iWidth
 	Height := iHeight
 	ShowToggle := iToggle
-	If (iOriginX = -1) {
+	if (iOriginX = -1) {
 		originX := 0
 	}
-	If (iOriginY = -1) {
+	if (iOriginY = -1) {
 		originY := 0
 	}
-	If (iWidth = -1) {
+	if (iWidth = -1) {
 		Width := A_ScreenWidth
 	}
 	if (iHeight = -1) {
