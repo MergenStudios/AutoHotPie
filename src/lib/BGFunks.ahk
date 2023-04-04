@@ -92,6 +92,7 @@ loadSettingsFile(){
 	}
 }
 
+; Register hotkeys that open/enable/toggle the pie menus
 loadPieMenus(){
 	; Copy global profiles to other profiles
 	for k, pieKey in Settings.appProfiles[1].pieKeys
@@ -108,7 +109,9 @@ loadPieMenus(){
 	}	
 
 	; Load app settings to hotkeys
-    appProfiles := Settings.appProfiles    
+    appProfiles := Settings.appProfiles
+	
+	; todo: the following section has a lot of duplicated code, clearn up later
     for k, profile in appProfiles {	
 		profile.pieEnableKey.enableState := false	; add enableState key to every profile.  Only for visual.
 		
@@ -128,7 +131,7 @@ loadPieMenus(){
 					Hotkey, % pieKey.hotkey, Off ; Disable pie hotkey if enable key exists
 				}
 			}
-
+			
 			if (profile.pieEnableKey.useEnableKey == true) {
 				if (profile.pieEnableKey.toggle == true) {
 					; If the enable key is used to toggle, register a hotkey that activates the label togglePieLabel (PieMenu.ahk)
@@ -172,58 +175,55 @@ loadPieMenus(){
 	}
 }
 
-loadSliceHotkeys(activePieMenu, hotkeysOn){
-	global SliceHotkeyPressed		
+loadSliceHotkeys(activePieMenu, hotkeysOn) {
+	global SliceHotkeyPressed
+
+	; profileKeyArray stores all hotkeys that activate pie menus for the active profile
 	profileKeyArray := []
-	for k2, pieKey in ActiveProfile.pieKeys{
+	for k, pieKey in ActiveProfile.pieKeys {
 		profileKeyArray.Push(pieKey.hotkey)
-	}	
-	; global ActivePieSliceHotkeyArray
-	static lastActivePieMenu	
+	}
+
+	; keep track of the last active pie menu, between function calls
+	static lastActivePieMenu
+
 	if (lastActivePieMenu != activePieMenu){
-		for k, key in ActivePieSliceHotkeyArray
-		{
-			; if hotkey is in another pie menu, continue			
-			if ( !hasValue(key, profileKeyArray) )
+		; turn off every hotkey that still belongs to the last active pie menu
+		for k, key in ActivePieSliceHotkeyArray {
+			if (!hasValue(key, profileKeyArray)) {
 				Hotkey, % key, Off
-			else
-				continue		
+			} else {
+				continue
+			}
 		}
 		ActivePieSliceHotkeyArray := []			
-		; msgbox, % activePieMenu.functions[1].label
-		for k, func in activePieMenu.functions
-		{
-			if (func.hotkey != ""){
-				; if hotkey is in another pie menu, don't switch it
-				if ( !hasValue(func.hotkey, profileKeyArray) ){
+
+		; Connect all hotkeys that activate slices to blockLabel
+		for k, func in activePieMenu.functions {
+			if (func.hotkey != "") {
+				if (! hasValue(func.hotkey, profileKeyArray) ){
 					Hotkey, % func.hotkey, blockLabel
 					Hotkey, % func.hotkey, On
 				}
 				ActivePieSliceHotkeyArray.Push(func.hotkey)
 			}
 		}		
-		lastActivePieMenu := activePieMenu
-		; turn previous menu hotkeys off
-		; turn new hotkey on		
-	} else if (hotkeysOn == false){
-		; turn activePieMenu keys off
-		for k, key in ActivePieSliceHotkeyArray
-		{	
-			; if hotkey is in another pie menu, continue	
-			if ( !hasValue(key, profileKeyArray) )
+		lastActivePieMenu := activePieMenu	
+	} else if (hotkeysOn == false) {
+		; If the hotkeys are off AND the active pie menu is the same as the last one,
+		; turn off all slice hotkeys and reset the global variables
+		for k, key in ActivePieSliceHotkeyArray {	
+			if (!hasValue(key, profileKeyArray)) {
 				Hotkey, % key, Off
-			else
-				continue						
+			} else {
+				continue
+			}
 		}
 		ActivePieSliceHotkeyArray := []
 
-		; SliceHotkeyPressed := ""
 		SliceHotkeyPressed := false
 		lastActivePieMenu := {}
-	} else {
-		; msgbox, they're the same somehow
-	}
-		
+	}	
 }
 
 Class UserPieFunctions {
