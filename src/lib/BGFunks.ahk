@@ -117,66 +117,58 @@ loadPieMenus(){
 
 		if (profile.ahkHandles[1] == "ahk_group regApps") {
 			Hotkey, ifWinNotActive, ahk_group regApps
-			for k, pieKey in profile.pieKeys			
-				{
-				; msgbox, % pieKey.hotkey
+			for k, pieKey in profile.pieKeys {
 				if (pieKey.enable == false)
 					continue							
+				
+				; Register the hoteky that activates the pie menu
 				Hotkey, % pieKey.hotkey, pieLabel
-				if (profile.pieEnableKey.useEnableKey == true) && (profile.pieEnableKey.toggle == false)
-					{ ; initialize off if modkey active no toggle				
-					Hotkey, % pieKey.hotkey, Off
-					}
-				}			
-			if (profile.pieEnableKey.useEnableKey == true)
-				{
-				if (profile.pieEnableKey.toggle == true)
-					{					
-					Hotkey, % profile.pieEnableKey.enableKey, togglePieLabel				
-					}
-				else
-					{
+
+				if (profile.pieEnableKey.useEnableKey == true) && (profile.pieEnableKey.toggle == false) {				
+					Hotkey, % pieKey.hotkey, Off ; Disable pie hotkey if enable key exists
+				}
+			}
+
+			if (profile.pieEnableKey.useEnableKey == true) {
+				if (profile.pieEnableKey.toggle == true) {
+					; If the enable key is used to toggle, register a hotkey that activates the label togglePieLabel (PieMenu.ahk)
+					Hotkey, % profile.pieEnableKey.enableKey, togglePieLabel		
+				} else {
+					; If the enable key isnt used to toggle, connect enable key down to the onPieLabel and enable key down to offPieLabel,
+					; meaning the pie menu can only be activated when the enable key held down
 					Hotkey, % profile.pieEnableKey.enableKey, onPieLabel
 					upHotkey := profile.pieEnableKey.enableKey " up"
 					Hotkey, % upHotkey, offPieLabel
-					}
 				}
+			}
         } else {
-		for ahkHandleIndex, ahkHandle in profile.ahkHandles
-			{
-				; profile.ahkHandles[ahkHandleIndex] := "ahk_exe " . ahkHandle ; Append the ahk_exe tag to all profiles
+			for ahkHandleIndex, ahkHandle in profile.ahkHandles {
 				profile.ahkHandles[ahkHandleIndex] := appendAHKTag(ahkHandle) ; Append the ahk_exe tag to all profiles
 				fullAHKHandle := profile.ahkHandles[ahkHandleIndex]
-				; msgbox, % fullAHKHandle	
 				GroupAdd, regApps, % fullAHKHandle 
 				Hotkey, ifWinActive, % fullAHKHandle
-				for k, pieKey in profile.pieKeys			
-					{						
-					; msgbox, % pieKey.hotkey
+				for k, pieKey in profile.pieKeys {						
 					if (pieKey.enable == false)
-						continue							
+						continue
+
 					Hotkey, % pieKey.hotkey, pieLabel
-					if (profile.pieEnableKey.useEnableKey == true) && (profile.pieEnableKey.toggle == false)
-						{ ; initialize off if modkey active no toggle				
+
+					if (profile.pieEnableKey.useEnableKey == true) && (profile.pieEnableKey.toggle == false) { ; initialize off if modkey active no toggle				
 						Hotkey, % pieKey.hotkey, Off
-						}
-					}			
-				if (profile.pieEnableKey.useEnableKey == true)
-					{
-					if (profile.pieEnableKey.toggle == true)
-						{
+					}
+				}
+				if (profile.pieEnableKey.useEnableKey == true) {
+					if (profile.pieEnableKey.toggle == true) {
 						Hotkey, % profile.pieEnableKey.enableKey, togglePieLabel				
-						}
-					else
-						{
+					}
+					else {
 						Hotkey, % profile.pieEnableKey.enableKey, onPieLabel
 						upHotkey := profile.pieEnableKey.enableKey " up"
 						Hotkey, % upHotkey, offPieLabel
-						}
 					}
-			}			          
+				}
+			}
         }
-					
 	}
 }
 
