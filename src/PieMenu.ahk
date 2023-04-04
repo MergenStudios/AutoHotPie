@@ -67,9 +67,6 @@ global ExitKey
 ExitKey.pressed := false
 
 
-; global pieDPIScale
-getMonitorCoords(Mon.left , Mon.right , Mon.top , Mon.bottom )
-
 ;Init G Text
 SetUpGDIP(0, 0, 50, 50) ;windows were appearing over taskbar without -0.01
 StartDrawGDIP()

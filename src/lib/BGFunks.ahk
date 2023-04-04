@@ -1,40 +1,4 @@
-﻿getMonitorCoords(ByRef monLeft, ByRef monTop, ByRef monRight, ByRef monBottom)
-	{
-	global monitorManager := New MonitorManager
-	; msgbox, % monitorManager.monitors[1].dpiX
-	monLeft := 0
-	monRight := 0
-	monTop := 0
-	monBottom := 0
-	loop
-		{
-		Sysget, testMon, Monitor, 1
-		if testMonLeft is number
-			Break
-		sleep, 100
-		}	
-	;Get the number of monitors from the monitor manager.
-	numMonitors := 0
-	for monIndex in monitorManager.monitors
-		{
-		;Count monitors
-		if (IsObject(monitorManager.monitors[monIndex]))
-		numMonitors := numMonitors+1
-		;Determine maximum area, only disregard scaling when true/pm is enabled in the compile.
-		if (monLeft > monitorManager.monitors[monIndex].left)
-		monLeft := monitorManager.monitors[monIndex].left
-		if (monRight < monitorManager.monitors[monIndex].right)
-		monRight := monitorManager.monitors[monIndex].right
-		if (monTop > monitorManager.monitors[monIndex].top)
-		monTop := monitorManager.monitors[monIndex].top
-		if (monBottom < monitorManager.monitors[monIndex].bottom)
-		monBottom := monitorManager.monitors[monIndex].bottom
-		; msgbox, %monIndex% "left:"%monLeft%" Top:"%monTop%" Right:"%monRight%" Bottom:"%monBottom%
-		}
-	return
-	}
-
-removeCharacters(var, chars="+^!#")
+﻿removeCharacters(var, chars="+^!#")
 	{
 	   stringreplace,var,var,%A_space%,_,a
 	   loop, parse, chars,
@@ -1898,7 +1862,7 @@ MonitorEnumProc(hMonitor, hdcMonitor, lprcMonitor, dwData) {
   this := Object(A_EventInfo)
   ;; Helgef: Allow RegisterCallback with BoundFunc objects (https://www.autohotkey.com/boards/viewtopic.php?p=235243#p235243)
   this.monitors.push(New Monitor(hMonitor, l, t, r, b))
-  
+
 	Return, 1
 }
 
